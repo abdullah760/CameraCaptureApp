@@ -1,26 +1,44 @@
-//
-//  ContentView.swift
-//  CameraView
-//
-//  Created by Abdullah on 08/07/2023.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    @State private var selectedImage: UIImage?
+    @State private var isImagePickerDisplay = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        NavigationView {
+            VStack {
+                
+                if selectedImage != nil {
+                    Image(uiImage: selectedImage!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(Circle())
+                        .frame(width: 300, height: 300)
+                } else {
+                    Image(systemName: "snow")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(Circle())
+                        .frame(width: 300, height: 300)
+                }
+                
+                Button("Camera") {
+                    self.sourceType = .camera
+                    self.isImagePickerDisplay.toggle()
+                }.padding()
+                
+                Button("photo") {
+                    self.sourceType = .photoLibrary
+                    self.isImagePickerDisplay.toggle()
+                }.padding()
+            }
+            .navigationBarTitle("Demo")
+            .sheet(isPresented: self.$isImagePickerDisplay) {
+                ImagePickerView(selectedImage: self.$selectedImage, sourceType: self.sourceType)
+            }
+            
         }
-        .padding()
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
